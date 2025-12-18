@@ -1,0 +1,48 @@
+ether1 = Tux83e1
+ether2 = Tux84e1
+ether4 = Tux82e1
+ether8= Tux84e2
+ether18 == Rc
+
+/system reset-config
+sudo ifconfig if_e1 172.16.80.1/24 - Para o Tux83e1 -- cmd
+sudo ifconfig if_e1 172.16.80.254/24 - Para o Tux84e1 -- cmd
+ping 172.16.80.254 - ping do Tux83 para "84 -- cmd
+sudo route -n, sudo arp -a (nao necessario) -- cmd
+sudo arp -d ipaddressTux84 (nao necessario) -- cmd
+
+sudo ifconfig if_e1 172.16.81.1/24 - Para o Tux82e1 -- cmd
+/interface bridge add name=bridge80 -- gtkterm (admin)
+/interface bridge add name=bridge81 -- gtkterm (admin)
+/interface bridge port remove [find interface =ether1] -- gtkterm (admin)
+/interface bridge port remove [find interface =ether2] -- gtkterm (admin)
+/interface bridge port remove [find interface =ether4] -- gtkterm (admin)
+/interface bridge port add bridge=bridge80 interface=ether1 -- gtkterm (admin)
+/interface bridge port add bridge=bridge80 interface=ether2 -- gtkterm (admin)
+/interface bridge port add bridge=bridge81 interface=ether4 -- gtkterm (admin)
+
+sudo ifconfig if_e2 172.16.81.253/24 - Para o Tux84e2 -- cmd
+sudo sysctl net.ipv4.ip_forward=1 -- no pc4-- cmd
+sudo sysctl net.ipv4.icmp_echo_ignore_broadcasts=0 -- no pc4 -- cmd
+/interface bridge port remove [find interface =ether8]
+/interface bridge port add bridge=bridge81 interface=ether8 -- gtkterm (admin)
+sudo route add -net 172.16.81.0/24 gw 172.16.80.254 -- no pc3 -- cmd
+sudo route add -net 172.16.80.0/24 gw 172.16.81.253 -- no pc2 -- cmd
+ping 172.16.81.1,172.16.81.253,172.16.80.254 -- no pc3 -- cmd (stestar se conseguimos chegar a todo o lado)
+
+/interface bridge port remove [find interface=ether18] -- gtkterm (admin)
+/interface bridge port add bridge=bridge81 interface=ether18 -- gtkterm (admin)
+-- mudar cabo para router --
+/system reset-configuration -- gtkterm (admin)
+/ip address add address=172.16.1.81/24 interface=ether1 -- gtkterm (admin)
+/ip address add address=172.16.81.254/24 interface=ether2 -- gtkterm (admin)
+sudo route add -net 172.16.1.0/24 gw 172.16.81.254 -- no pc2 -- cmd
+sudo route add -net 172.16.1.0/24 gw 172.16.81.254 -- no pc4 -- cmd
+sudo route add -net 172.16.1.0/24 gw 172.16.80.254 -- no pc3 -- cmd
+/ip route add dst-address=172.16.80.0/24 gateway=172.16.81.253  -- gtkterm (admin)
+ping 172.16.80.254, 172.16.81.1, 172.16.81.254 -- no pc3 -- cmd
+ping 172.16.1.10 -- testar se liga ao FTP no pc3
+
+sudo nano /etc/resolv.conf -- em todos os 3 pcs
+nameserver 10.227.20.3 -- em todos os 3 pcs
+ping ftp.netlab.fe.up.pt -- em todos s 3 pcs
