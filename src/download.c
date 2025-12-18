@@ -4,7 +4,6 @@ int parse(char *input, struct URL *url) {
 
     regex_t rx;
 
-    // tem de ter barra
     if (regcomp(&rx, BAR, 0) != 0 || regexec(&rx, input, 0, NULL, 0) != 0)
         return -1;
     regfree(&rx);
@@ -24,7 +23,6 @@ int parse(char *input, struct URL *url) {
     }
     regfree(&rx);
 
-    // recurso e nome do ficheiro
     sscanf(input, RESOURCE_REGEX, url->resource);
     strcpy(url->file, strrchr(input, '/') + 1);
 
@@ -32,7 +30,6 @@ int parse(char *input, struct URL *url) {
         !strlen(url->resource) || !strlen(url->file))
         return -1;
 
-    // resolver hostname
     struct hostent *h = gethostbyname(url->host);
     if (h == NULL) {
         printf("Invalid hostname '%s'\n", url->host);

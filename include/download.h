@@ -35,18 +35,18 @@
 #define RESPCODE_REGEX  "%d"
 #define PASSIVE_REGEX   "%*[^(](%d,%d,%d,%d,%d,%d)%*[^\n$)]"
 
-/* Credenciais por omissão no caso ftp://<host>/<url-path> */
+/* Credenciais por omissão */
 #define DEFAULT_USER        "anonymous"
 #define DEFAULT_PASSWORD    "password"
 
 /* Informação extraída do URL */
 struct URL {
-    char host[MAX_LENGTH];      // ex: ftp.up.pt
-    char resource[MAX_LENGTH];  // ex: parrot/misc/canary/warrant-canary-0.txt
-    char file[MAX_LENGTH];      // ex: warrant-canary-0.txt
-    char user[MAX_LENGTH];      // username
-    char password[MAX_LENGTH];  // password
-    char ip[MAX_LENGTH];        // ex: 193.137.29.15
+    char host[MAX_LENGTH];
+    char resource[MAX_LENGTH];
+    char file[MAX_LENGTH];     
+    char user[MAX_LENGTH];
+    char password[MAX_LENGTH];
+    char ip[MAX_LENGTH];
 };
 
 /* Estados para leitura de respostas do servidor */
@@ -66,19 +66,19 @@ int createSocket(char *ip, int port);
 /* Autenticação: envia USER/PASS e devolve o código de resposta final */
 int authConn(const int socket, const char *user, const char *pass);
 
-/* Lê uma resposta FTP (tratando single-line e multi-line) e devolve o código */
+/* Lê uma resposta FTP e devolve o código */
 int readResponse(const int socket, char *buffer);
 
-/* Modo passivo: envia PASV, extrai IP e porto da ligação de dados */
+/* Modo passivo: envia PASV, extrai IP e port da ligação de dados */
 int passiveMode(const int socket, char *ip, int *port);
 
-/* Envia comando RETR para o recurso indicado */
+/* Envia RETR para o recurso indicado */
 int requestResource(const int socket, char *resource);
 
-/* Lê os dados pela ligação de dados e grava no ficheiro local */
+/* Lê os dados e grava no ficheiro local */
 int getResource(const int socketA, const int socketB, char *filename);
 
-/* Envia QUIT e fecha ambas as ligações (controlo e dados) */
+/* Envia QUIT e fecha ambas as ligações */
 int closeConnection(const int socketA, const int socketB);
 
 #endif // DOWNLOAD_H
